@@ -1,0 +1,89 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight"
+    Title="MainWindow" Height="600" Width="800">
+
+    <Grid Height="600" Width="800">
+
+        <TextBlock x:Name="DASegBoundariesBlock" Margin="46,107,654,471">Границы сетки</TextBlock>
+        <TextBox x:Name="DASegBoundariesBox" Margin="68,139,686,441"/>
+
+        <TextBlock x:Name="DANodesNumBlock" Margin="25,207,577,347" Text="Число узлов сетки, на которой &#x0a;задаются значения поля"></TextBlock>
+        <TextBox x:Name="DANodesNumBox" Margin="69,257,685,323"></TextBox>
+
+        <TextBlock x:Name="SDNodesNumBlock" Margin="571,107,20,471">Число узлов сглаживающего сплайна</TextBlock>
+        <TextBox x:Name="SDNodesNumBox" Margin="654,139,100,441"/>
+
+        <TextBlock x:Name="SDUniformNodesNumBlock" Margin="577,207,25,347"><Run Text="Число узлов равномерной сетки, &#x0a;на которой вычисляются значения &#x0a;сплайна"/></TextBlock>
+        <TextBox x:Name="SDUniformNodesNumBox" Margin="654,262,100,318"/>
+
+        <TextBlock x:Name="SDBreakConditionNormaBlock" Margin="578,302,24,253"><Run Text="Значение нормы невязки, при &#xA;котором происходит остановка"/></TextBlock>
+        <TextBox x:Name="SDBreakConditionNormaBox" Margin="654,348,100,232"/>
+
+        <TextBlock x:Name="SDMaxItersNumBlock" Margin="576,392,26,183"><Run Text="Максимальное число итераций"/></TextBlock>
+        <TextBox x:Name="SDMaxItersNumBox" Margin="654,424,100,156"/>
+
+        <TextBlock x:Name="DAIsGridUniformBlock" Margin="73,308,665,265"><Run Text="Тип сетки"/></TextBlock>
+        <ComboBox x:Name="DAIsGridUniformComboBox" Margin="40,349,634,232" >
+            <ComboBoxItem Content="Равномерная"></ComboBoxItem>
+            <ComboBoxItem Content="Неравномерная"></ComboBoxItem>
+        </ComboBox>
+
+        <TextBlock x:Name="DAFunctionBlock" Margin="73,390,665,183"><Run Text="Функция"/></TextBlock>
+        <ComboBox x:Name="DAFunctionComboBox" Margin="38,426,634,155" >
+            <ComboBoxItem Content="F(x) = (x*x*x, x*x*x)"></ComboBoxItem>
+            <ComboBoxItem Content="F(x) = (x*x, x*x*x)"></ComboBoxItem>
+        </ComboBox>
+
+        <Menu Margin="0,0,0,581">
+            <MenuItem Header="File">
+                <MenuItem Header="Save" Click="SaveItem_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Execute">
+                <MenuItem Header="Data from Controls" Click="DataFromControlsItem_Click"></MenuItem>
+                <MenuItem Header="Data from File" Click="DataFromFileItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <TextBlock x:Name="DASegBoundariesBlock_Copy" Margin="305,65,305,513"><Run FontWeight="Bold" Text=" NodeVal   TrueVal    SplineVal"/></TextBlock>
+        <ListBox x:Name="SplineValuesList" Margin="305,87,305,333">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Margin" Value="0,0,10,0"></Setter>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Text="{Binding Path=Node, StringFormat=f5}"></TextBlock>
+                        <TextBlock Text="{Binding Path=NodeVal, StringFormat=f5}"></TextBlock>
+                        <TextBlock Text="{Binding Path=SplineNodeVal, StringFormat=f5}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock x:Name="DASegBoundariesBlock_Copy1" Margin="337,296,337,282"><Run FontWeight="Bold" Text=" NodeVal   SplineVal"/></TextBlock>
+        <ListBox x:Name="UniformGridValuesList" Margin="334,319,332,101">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Margin" Value="0,0,10,0"></Setter>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Text="{Binding Path=Node, StringFormat=f5}"></TextBlock>
+                        <TextBlock Text="{Binding Path=SplineValue, StringFormat=f5}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+    </Grid>
+</Window>
