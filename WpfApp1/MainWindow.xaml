@@ -7,7 +7,16 @@
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
     Title="MainWindow" Height="600" Width="800">
-
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MyCommand.CommandDataFromControls}"
+                        Executed="DataFromControlsHandler"
+                        CanExecute="CanDataFromControlsHandler">
+        </CommandBinding>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="SaveHandler"
+                        CanExecute="CanSaveHandler">
+        </CommandBinding>
+    </Window.CommandBindings>
     <Grid Height="600" Width="800">
 
         <TextBlock x:Name="DASegBoundariesBlock" Margin="46,107,654,471">Границы сетки</TextBlock>
@@ -42,10 +51,10 @@
 
         <Menu Margin="0,0,0,581">
             <MenuItem Header="File">
-                <MenuItem Header="Save" Click="SaveItem_Click"></MenuItem>
+                <MenuItem Header="Save" Command ="ApplicationCommands.Save"></MenuItem>
             </MenuItem>
             <MenuItem Header="Execute">
-                <MenuItem Header="Data from Controls" Click="DataFromControlsItem_Click"></MenuItem>
+                <MenuItem Header="Data from Controls" Command="{x:Static local:MyCommand.CommandDataFromControls}"></MenuItem>
                 <MenuItem Header="Data from File" Click="DataFromFileItem_Click"></MenuItem>
             </MenuItem>
         </Menu>
@@ -68,8 +77,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock x:Name="DASegBoundariesBlock_Copy1" Margin="337,296,337,282"><Run FontWeight="Bold" Text=" NodeVal   SplineVal"/></TextBlock>
-        <ListBox x:Name="UniformGridValuesList" Margin="334,319,332,101">
+        <TextBlock x:Name="DASegBoundariesBlock_Copy1" Margin="308,294,366,284"><Run FontWeight="Bold" Text=" NodeVal   SplineVal"/></TextBlock>
+        <ListBox x:Name="UniformGridValuesList" Margin="305,316,305,104">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -85,5 +94,6 @@
             </ListBox.ItemTemplate>
 
         </ListBox>
+        
     </Grid>
 </Window>

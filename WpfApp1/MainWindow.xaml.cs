@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OxyPlot;
 namespace WpfApp1
 {
     public partial class MainWindow : Window
@@ -25,8 +26,6 @@ namespace WpfApp1
             VD = new ViewData();
             BindConnections(VD); // Установка привязки с элементами управления
         }
-
-
         public void BindConnections(ViewData VD)
         {
             Binding Binding_DAFunctionID = new Binding(); // Выбор функции
@@ -40,21 +39,25 @@ namespace WpfApp1
             Binding_DASegBoundaries.Source = VD;
             Binding_DASegBoundaries.Path = new PropertyPath("DA_SegBoundaries");
             Binding_DASegBoundaries.Converter = SD_Converter;
+            Binding_DASegBoundaries.ValidatesOnDataErrors = true;
             DASegBoundariesBox.SetBinding(TextBox.TextProperty, Binding_DASegBoundaries);
 
             Binding Binding_DANodesNum = new Binding(); // Ввод числа узлов сетки
             Binding_DANodesNum.Source = VD;
             Binding_DANodesNum.Path = new PropertyPath("DA_NodesNum");
+            Binding_DANodesNum.ValidatesOnDataErrors = true;
             DANodesNumBox.SetBinding(TextBox.TextProperty, Binding_DANodesNum);
 
             Binding Binding_SDNodesNum = new Binding(); // Ввод числа узлов сглаживающего сплайна
             Binding_SDNodesNum.Source = VD;
             Binding_SDNodesNum.Path = new PropertyPath("SD_NodesNum");
+            Binding_SDNodesNum.ValidatesOnDataErrors = true;
             SDNodesNumBox.SetBinding(TextBox.TextProperty, Binding_SDNodesNum);
 
             Binding Binding_SDUniformNodsNum = new Binding(); // Ввод числа узлов равномерной сетки
             Binding_SDUniformNodsNum.Source = VD;
             Binding_SDUniformNodsNum.Path = new PropertyPath("SD_UniformNodesNum");
+            Binding_SDUniformNodsNum.ValidatesOnDataErrors = true;
             SDUniformNodesNumBox.SetBinding(TextBox.TextProperty, Binding_SDUniformNodsNum);
 
             Binding Binding_SDBreakConditionNorma = new Binding(); // Ввод значение нормы невязки для остановки
@@ -67,54 +70,7 @@ namespace WpfApp1
             Binding_SDMaxItersNum.Path = new PropertyPath("SD_MaxItersNum");
             SDMaxItersNumBox.SetBinding(TextBox.TextProperty, Binding_SDMaxItersNum);
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if(DAIsGridUniformComboBox.SelectedIndex == 0)
-            {
-                VD.DA_IsGridUniform = true;
-            }
-            else
-            {
-                VD.DA_IsGridUniform = false;
-            }
-            MessageBox.Show(VD.SD_MaxItersNum.ToString());
-        }
-
-        private void SaveItem_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                string FilePath = "";
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    FilePath = saveFileDialog.FileName;
-                }
-                VD.InitDAThroughControl();
-                VD.Save(FilePath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString()); 
-            }
-        }
-
-        private void DataFromControlsItem_Click(object sender, RoutedEventArgs e)
-        {
-            try 
-            {
-                VD.InitDAThroughControl();
-                VD.InitSD();
-                VD.CalcSpline();
-                SplineValuesList.ItemsSource = VD.SD_Link.ApproximationRes;
-                UniformGridValuesList.ItemsSource = VD.SD_Link.ResultOnAddonGrid;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
+     
         private void DataFromFileItem_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -135,7 +91,67 @@ namespace WpfApp1
             {
                 MessageBox.Show(ex.ToString());
             }
-            
+        }
+
+        public void CanDataFromControlsHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            List<string> vars = ["DA_NodesNum", "SD_UniformNodesNum", "DA_SegBoundaries", "SD_NodesNum"];
+            e.CanExecute = true;
+            for(int i = 0; i < vars.Count();  ++i)
+            {
+                if (VD[vars[i]] != "")
+                {
+                    e.CanExecute = false;
+                    break;
+                }
+            }
+        }
+
+        public void DataFromControlsHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                VD.InitDAThroughControl();
+                VD.InitSD();
+                VD.CalcSpline();
+                SplineValuesList.ItemsSource = VD.SD_Link.ApproximationRes;
+                UniformGridValuesList.ItemsSource = VD.SD_Link.ResultOnAddonGrid;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void CanSaveHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            List<string> vars = ["DA_NodesNum", "DA_SegBoundaries"];
+            e.CanExecute = true;
+            for(int i = 0; i < vars.Count(); ++i)
+            {
+                if (VD[vars[i]] != "")
+                {
+                    e.CanExecute = false;
+                    break;
+                }
+            }
+        }
+        public void SaveHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                string FilePath = "";
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    FilePath = saveFileDialog.FileName;
+                }
+                VD.InitDAThroughControl();
+                VD.Save(FilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }

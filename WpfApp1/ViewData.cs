@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using lab3;
 namespace WpfApp1
 {
@@ -11,7 +12,7 @@ namespace WpfApp1
     // Пользователь вводит для SplineData: Число узлов сглаживающего сплайна(TextBox), число узлов равномерной сетки, на кот вычисляются значения сплайна (TextBox)
     // значение нормы невязки, при котором происходит остановка итераций(TextBox), максимальное число итераций при минимизации невязки(TextBox)
     // Вывод информации из SplineData
-    public class ViewData
+    public class ViewData : IDataErrorInfo
     {
         public V2DataArray? DA_Link;     // Ссылка на DataArray
         public double[] DA_SegBoundaries { get; set; } // Границы отрезка с узлами сетки
@@ -35,10 +36,10 @@ namespace WpfApp1
         public void InitDAThroughControl()
         {
             FValues F = Functions.FVFunc[DA_FunctionID];
-            if (DA_SegBoundaries[1] == 0 || DA_SegBoundaries[1] <= DA_SegBoundaries[0])
+        /*    if (DA_SegBoundaries[1] == 0 || DA_SegBoundaries[1] <= DA_SegBoundaries[0])
             {
                 throw new Exception("Некорректные границы отрезка");
-            }
+            }*/
             if (DA_NodesNum <= 1)
             {
                 throw new Exception("Некорректное число узлов");
@@ -86,5 +87,50 @@ namespace WpfApp1
             DA_Link = new V2DataArray("", new DateTime()); // Нулевая инициализация
             return V2DataArray.Load(filename, ref DA_Link);
         }
+
+        public string this[string ColumnName]
+        {
+            get
+            {
+                string error = string.Empty;
+                switch (ColumnName)
+                {
+                    case "DA_NodesNum":
+                        if(DA_NodesNum < 3)
+                        {
+                            error += "Число узлов сетки должно быть не менее трёх.\n";
+                        }
+                        break;
+                    case "SD_UniformNodesNum":
+                        if(SD_UniformNodesNum <= 3)
+                        {
+                            error += "Число узлов равномерной сетки, на которой вычисляются значения сплайна должно быть не менее трёх.\n";
+                        }
+                        break;
+                    case "DA_SegBoundaries":
+                        if (DA_SegBoundaries[0] >= DA_SegBoundaries[1])
+                        {
+                            error += "Левый конец отрезка, на котором заданы дискретные значения функции, должен быть меньше чем правый.\n";
+                        }
+                        break;
+                    case "SD_NodesNum":
+                        if(SD_NodesNum < 2)
+                        {
+                            error += "Число узлов сглаживающего сплайна должно быть больше или равно двум.\n";
+                        }
+                        if(SD_NodesNum < DA_NodesNum)
+                        {
+                            error += "Число узлов сглаживающего сплайна должно быть не больше числа заданных дискретных значений функции.\n";
+                        }
+                        break;
+                }
+                return error;
+            }
+        }
+        public string Error
+        {
+            get { throw new NotImplementedException(); }
+        }
+
     }
 }
