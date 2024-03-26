@@ -142,7 +142,14 @@ namespace WpfApp1
         public bool Load(string filename)
         {
             DA_Link = new V2DataArray("", new DateTime()); // Нулевая инициализация
-            return V2DataArray.Load(filename, ref DA_Link);
+            bool status = V2DataArray.Load(filename, ref DA_Link);
+            if (status)
+            {
+                DA_NodesNum = DA_Link.Net.Length;
+                DA_SegBoundaries[0] = DA_Link.Net[0];
+                DA_SegBoundaries[1] = DA_Link.Net[DA_NodesNum - 1];
+            }
+            return status;
         }
 
         public string this[string ColumnName]

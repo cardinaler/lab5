@@ -76,6 +76,9 @@ namespace WpfApp1
                 VD.CalcSpline();
                 SplineValuesList.ItemsSource = VD.SD_Link.ApproximationRes;
                 UniformGridValuesList.ItemsSource = VD.SD_Link.ResultOnAddonGrid;
+                VD.InitChartModelSpline();
+                TestGrid.Children.Clear();
+                TestGrid.Children.Add(VD.ChartModelSpline);
             }
             catch(Exception ex)
             {
