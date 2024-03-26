@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using lab3;
+using System.Windows;
+using LiveCharts.Wpf;
+using LiveCharts;
+using LiveCharts.Configurations;
+using System.Windows.Media;
 namespace WpfApp1
 {
     // Пользователь вводит для DataArray: Число узлов сетки(TextBox), границы отрезка(TextBox) и выбирает тип сетки(RadioButton или ComboBox или CheckBox)  <summary>
@@ -26,24 +31,84 @@ namespace WpfApp1
         public int SD_UniformNodesNum { get; set; } // Число узлов равномерной сетки, на которой вычисляются значения сплайна
         public double SD_BreakConditionNorma { get; set; } // Значение нормы невязки для остановки
         public int SD_MaxItersNum { get; set; } // Масимальное число итераций   
+
+
+        public CartesianChart ChartModelSpline { get; set; } // График проходящий через точки сплайн апроксимации
+        public CartesianChart ChartModelFunc { get; set; } // Точки значений функции на сетке
         public ViewData()
         {
             DA_SegBoundaries = new double[2];
             DA_Link = null;
             SD_Link = null;
+            this.ChartModelSpline = new CartesianChart(); 
         }
+        public void InitChartModelSpline()
+        {
+           
+            ChartModelSpline.Series.Clear();
+            
+            var SplineValues = new ChartValues<Point>();
+            var FuncValues = new ChartValues<Point>();
+            InitChartSplinePoints(SplineValues);
+            InitChartFuncPoints(FuncValues);
+            this.ChartModelSpline.Series = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Configuration = new CartesianMapper<Point>()
+                    .X(point => point.X) // Define a function that returns a value that should map to the x-axis
+                    .Y(point => point.Y), // Define a function that returns a value that should map to the y-axis
+                    Title = "Series",
+                    Values = SplineValues,
+                    PointGeometry = null,
 
+                },
+
+                new ScatterSeries
+                {
+                    Configuration = new CartesianMapper<Point>()
+                    .X(point => point.X) // Define a function that returns a value that should map to the x-axis
+                    .Y(point => point.Y), // Define a function that returns a value that should map to the y-axis
+                    Title = "Series",
+                    Values = FuncValues,
+                },
+
+            };
+        }
+        private void InitChartSplinePoints(ChartValues<Point> L)
+        {
+            if(SD_Link is null)
+            {
+                throw new Exception("SD_Link is null");
+            }
+            else
+            {
+                for(int i = 0; i < SD_UniformNodesNum; ++i)
+                {
+                    var point = new Point() { X = SD_Link.ResultOnAddonGrid[i].Node, Y = SD_Link.ResultOnAddonGrid[i].SplineValue };
+                    L.Add(point);
+                }
+            }
+        }
+        private void InitChartFuncPoints(ChartValues<Point> L)
+        {
+            if(DA_Link is null)
+            {
+                throw new Exception("DA_Lind is null");
+            }
+            else
+            {
+                for (int i = 0; i < DA_NodesNum; ++i)
+                {
+                    var point = new Point() { X = DA_Link.Net[i], Y = DA_Link.Field_values[0, i]};
+                    L.Add(point);
+                }
+            }
+        }
+        
         public void InitDAThroughControl()
         {
             FValues F = Functions.FVFunc[DA_FunctionID];
-        /*    if (DA_SegBoundaries[1] == 0 || DA_SegBoundaries[1] <= DA_SegBoundaries[0])
-            {
-                throw new Exception("Некорректные границы отрезка");
-            }*/
-            if (DA_NodesNum <= 1)
-            {
-                throw new Exception("Некорректное число узлов");
-            }
             DA_Link = new V2DataArray("Moonlight", new DateTime(), DA_NodesNum, DA_SegBoundaries[0], DA_SegBoundaries[1], F);
         }
         public void CalcSpline()
@@ -57,14 +122,6 @@ namespace WpfApp1
         }
         public void InitSD()
         {
-            if(SD_NodesNum <= 1)
-            {
-                throw new Exception("Некорректное число узлов сглаживающего сплайна");
-            }
-            if(SD_UniformNodesNum <= 1)
-            {
-                throw new Exception("Некорректное число узлов равномерной сетки");
-            }
             if(DA_Link is null)
             {
                 throw new Exception("DataArray is null");
@@ -118,7 +175,7 @@ namespace WpfApp1
                         {
                             error += "Число узлов сглаживающего сплайна должно быть больше или равно двум.\n";
                         }
-                        if(SD_NodesNum < DA_NodesNum)
+                        if(SD_NodesNum > DA_NodesNum)
                         {
                             error += "Число узлов сглаживающего сплайна должно быть не больше числа заданных дискретных значений функции.\n";
                         }

@@ -9,7 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MainViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
+    <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
+    <PackageReference Include="OxyPlot.Wpf.Shared" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>

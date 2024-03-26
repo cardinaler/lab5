@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:WpfApp1"
+        xmlns:viewModel="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
     Title="MainWindow" Height="600" Width="800">
@@ -17,34 +19,45 @@
                         CanExecute="CanSaveHandler">
         </CommandBinding>
     </Window.CommandBindings>
+
     <Grid Height="600" Width="800">
+        <Border BorderBrush="Black" BorderThickness="1" Margin="0,19,600,485"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="200,19,400,485"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="400,19,200,485"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="600,19,0,485"/>
 
-        <TextBlock x:Name="DASegBoundariesBlock" Margin="46,107,654,471">Границы сетки</TextBlock>
-        <TextBox x:Name="DASegBoundariesBox" Margin="68,139,686,441"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="0,115,600,389"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="200,115,400,389"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="400,115,200,389"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="600,115,0,389"/>
 
-        <TextBlock x:Name="DANodesNumBlock" Margin="25,207,577,347" Text="Число узлов сетки, на которой &#x0a;задаются значения поля"></TextBlock>
-        <TextBox x:Name="DANodesNumBox" Margin="69,257,685,323"></TextBox>
 
-        <TextBlock x:Name="SDNodesNumBlock" Margin="571,107,20,471">Число узлов сглаживающего сплайна</TextBlock>
-        <TextBox x:Name="SDNodesNumBox" Margin="654,139,100,441"/>
+        <TextBlock x:Name="DASegBoundariesBlock" Margin="59,30,660,548">Границы сетки</TextBlock>
+        <TextBox x:Name="DASegBoundariesBox" Margin="37,84,637,496"/>
 
-        <TextBlock x:Name="SDUniformNodesNumBlock" Margin="577,207,25,347"><Run Text="Число узлов равномерной сетки, &#x0a;на которой вычисляются значения &#x0a;сплайна"/></TextBlock>
-        <TextBox x:Name="SDUniformNodesNumBox" Margin="654,262,100,318"/>
+        <TextBlock x:Name="DANodesNumBlock" Margin="216,30,416,524" Text="Число узлов сетки, на которой &#x0a;задаются значения поля"></TextBlock>
+        <TextBox x:Name="DANodesNumBox" Margin="237,84,437,497"></TextBox>
 
-        <TextBlock x:Name="SDBreakConditionNormaBlock" Margin="578,302,24,253"><Run Text="Значение нормы невязки, при &#xA;котором происходит остановка"/></TextBlock>
-        <TextBox x:Name="SDBreakConditionNormaBox" Margin="654,348,100,232"/>
+        <TextBlock x:Name="SDNodesNumBlock" Margin="20,126,620,438" Text="Число узлов сглаживающего &#x0a;                  сплайна"></TextBlock>
+        <TextBox x:Name="SDNodesNumBox" Margin="37,179,637,401"/>
 
-        <TextBlock x:Name="SDMaxItersNumBlock" Margin="576,392,26,183"><Run Text="Максимальное число итераций"/></TextBlock>
-        <TextBox x:Name="SDMaxItersNumBox" Margin="654,424,100,156"/>
+        <TextBlock x:Name="SDUniformNodesNumBlock" Margin="208,126,409,428"><Run Text="Число узлов равномерной сетки,&#x0a;      на которой вычисляются &#x0a;             значения сплайна"/></TextBlock>
+        <TextBox x:Name="SDUniformNodesNumBox" Margin="237,179,437,401"/>
 
-        <TextBlock x:Name="DAIsGridUniformBlock" Margin="73,308,665,265"><Run Text="Тип сетки"/></TextBlock>
-        <ComboBox x:Name="DAIsGridUniformComboBox" Margin="40,349,634,232" >
+        <TextBlock x:Name="SDBreakConditionNormaBlock" Margin="412,126,212,429"><Run Text="Значение нормы невязки, при &#xA;котором происходит остановка"/></TextBlock>
+        <TextBox x:Name="SDBreakConditionNormaBox" Margin="437,179,237,401"/>
+
+        <TextBlock x:Name="SDMaxItersNumBlock" Margin="612,126,13,449"><Run Text="Максимальное число итераций"/></TextBlock>
+        <TextBox x:Name="SDMaxItersNumBox" Margin="637,179,37,401"/>
+
+        <TextBlock x:Name="DAIsGridUniformBlock" Margin="474,30,274,543"><Run Text="Тип сетки"/></TextBlock>
+        <ComboBox x:Name="DAIsGridUniformComboBox" Margin="437,84,237,497" >
             <ComboBoxItem Content="Равномерная"></ComboBoxItem>
             <ComboBoxItem Content="Неравномерная"></ComboBoxItem>
         </ComboBox>
 
-        <TextBlock x:Name="DAFunctionBlock" Margin="73,390,665,183"><Run Text="Функция"/></TextBlock>
-        <ComboBox x:Name="DAFunctionComboBox" Margin="38,426,634,155" >
+        <TextBlock x:Name="DAFunctionBlock" Margin="676,30,76,543"><Run Text="Функция"/></TextBlock>
+        <ComboBox x:Name="DAFunctionComboBox" Margin="636,84,36,497" >
             <ComboBoxItem Content="F(x) = (x*x*x, x*x*x)"></ComboBoxItem>
             <ComboBoxItem Content="F(x) = (x*x, x*x*x)"></ComboBoxItem>
         </ComboBox>
@@ -59,8 +72,8 @@
             </MenuItem>
         </Menu>
 
-        <TextBlock x:Name="DASegBoundariesBlock_Copy" Margin="305,65,305,513"><Run FontWeight="Bold" Text=" NodeVal   TrueVal    SplineVal"/></TextBlock>
-        <ListBox x:Name="SplineValuesList" Margin="305,87,305,333">
+        <TextBlock x:Name="DASegBoundariesBlock_Copy" Margin="13,243,611,335"><Run FontWeight="Bold" Text=" NodeVal   TrueVal    SplineVal"/></TextBlock>
+        <ListBox x:Name="SplineValuesList" Margin="6,265,604,41">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -77,8 +90,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock x:Name="DASegBoundariesBlock_Copy1" Margin="308,294,366,284"><Run FontWeight="Bold" Text=" NodeVal   SplineVal"/></TextBlock>
-        <ListBox x:Name="UniformGridValuesList" Margin="305,316,305,104">
+        <TextBlock x:Name="DASegBoundariesBlock_Copy1" Margin="210,243,464,335"><Run FontWeight="Bold" Text=" NodeVal   SplineVal"/></TextBlock>
+        <ListBox x:Name="UniformGridValuesList" Margin="203,265,407,41">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -94,6 +107,10 @@
             </ListBox.ItemTemplate>
 
         </ListBox>
-        
+
+        <Grid Name="TestGrid"  Margin="406,265,9,41">
+        </Grid>
+
+
     </Grid>
 </Window>

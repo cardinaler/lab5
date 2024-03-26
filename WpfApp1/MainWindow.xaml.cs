@@ -1,29 +1,19 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using OxyPlot;
+
 namespace WpfApp1
 {
     public partial class MainWindow : Window
     {
-        ViewData VD;
+        public ViewData VD;
         public MainWindow()
         {
-            InitializeComponent();
             VD = new ViewData();
+            InitializeComponent();
             BindConnections(VD); // Установка привязки с элементами управления
         }
         public void BindConnections(ViewData VD)
@@ -70,7 +60,7 @@ namespace WpfApp1
             Binding_SDMaxItersNum.Path = new PropertyPath("SD_MaxItersNum");
             SDMaxItersNumBox.SetBinding(TextBox.TextProperty, Binding_SDMaxItersNum);
         }
-     
+        
         private void DataFromFileItem_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -116,6 +106,9 @@ namespace WpfApp1
                 VD.CalcSpline();
                 SplineValuesList.ItemsSource = VD.SD_Link.ApproximationRes;
                 UniformGridValuesList.ItemsSource = VD.SD_Link.ResultOnAddonGrid;
+                VD.InitChartModelSpline();
+                TestGrid.Children.Clear();
+                TestGrid.Children.Add(VD.ChartModelSpline);
             }
             catch (Exception ex)
             {
@@ -154,4 +147,5 @@ namespace WpfApp1
             }
         }
     }
+    
 }
